@@ -1,0 +1,4311 @@
+# platforms.yaml - SUPER CONFIGURACIÓN CON 300+ PLATAFORMAS
+
+version: "3.0"
+author: "UserFinder Ultimate"
+last_updated: "2024-01-15"
+description: "Configuración con 300+ plataformas para búsqueda OSINT"
+
+platforms:
+  # ======================= REDES SOCIALES PRINCIPALES (50+) =======================
+  "Facebook":
+    base_url: "https://www.facebook.com/"
+    profile_url: "{username}"
+    methods: ["status_code", "content_analysis", "redirect_check"]
+    patterns:
+      not_found: ["This content isn't available", "Sorry, this page isn't available"]
+      found: ["fb://profile/", "fb://photo/", "entity_id"]
+    headers_check: ["x-frame-options", "facebook-api-version"]
+    weight: 1.0
+
+  "Facebook Public":
+    base_url: "https://www.facebook.com/public/"
+    profile_url: "{username}"
+    requires_exact_match: false
+    weight: 0.7
+
+  "Twitter":
+    base_url: "https://twitter.com/"
+    profile_url: "{username}"
+    methods: ["status_code", "meta_tags", "json_ld"]
+    patterns:
+      found: ["data-testid=\"UserName\"", "@{username}", "Twitter", "Tweet"]
+    api_endpoint: "https://api.twitter.com/2/users/by/username/{username}"
+    weight: 1.0
+
+  "Twitter API":
+    base_url: "https://api.twitter.com/2/users/by/username/"
+    profile_url: "{username}"
+    requires_auth: true
+    check_method: "api"
+    weight: 0.9
+
+  "Instagram":
+    base_url: "https://www.instagram.com/"
+    profile_url: "{username}/"
+    methods: ["status_code", "meta_tags", "graphql"]
+    patterns:
+      not_found: ["Sorry, this page isn't available", "The link you followed may be broken"]
+      found: ["\"username\"", "profile_pic_url", "edge_followed_by"]
+    graphql_endpoint: "https://www.instagram.com/api/v1/users/web_profile_info/?username={username}"
+    weight: 1.0
+
+  "Instagram Stories":
+    base_url: "https://www.instagram.com/stories/"
+    profile_url: "{username}"
+    check_availability_only: true
+    weight: 0.6
+
+  "LinkedIn":
+    base_url: "https://www.linkedin.com/in/"
+    profile_url: "{username}"
+    methods: ["status_code", "meta_tags"]
+    patterns:
+      not_found: ["This profile is not available", "404 error"]
+      found: ["top-card-layout__title", "public-profile/settings"]
+    requires_login: true
+    weight: 0.9
+
+  "LinkedIn Company":
+    base_url: "https://www.linkedin.com/company/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "TikTok":
+    base_url: "https://www.tiktok.com/@"
+    profile_url: "{username}"
+    methods: ["status_code", "json_analysis"]
+    patterns:
+      found: ["\"uniqueId\":\"{username}\"", "SIGI_STATE", "user-info"]
+    api_endpoint: "https://m.tiktok.com/api/user/detail/?uniqueId={username}"
+    weight: 1.0
+
+  "TikTok Web":
+    base_url: "https://www.tiktok.com/"
+    profile_url: "@{username}"
+    weight: 0.9
+
+  "Snapchat":
+    base_url: "https://www.snapchat.com/add/"
+    profile_url: "{username}"
+    methods: ["status_code", "screenshot_check"]
+    patterns:
+      found: ["snapchat.com/add/{username}", "displayName"]
+    weight: 0.9
+
+  "Snapchat Spotlight":
+    base_url: "https://story.snapchat.com/@"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Pinterest":
+    base_url: "https://www.pinterest.com/"
+    profile_url: "{username}/"
+    methods: ["status_code", "pinterest_api"]
+    patterns:
+      found: ["profile_name", "board_count", "follower_count"]
+    weight: 0.9
+
+  "Reddit":
+    base_url: "https://www.reddit.com/user/"
+    profile_url: "{username}"
+    methods: ["status_code", "json_api"]
+    patterns:
+      not_found: ["search?q={username}", "page not found"]
+      found: ["user-tablerow", "karma", "trophy"]
+    api_endpoint: "https://www.reddit.com/user/{username}/about.json"
+    weight: 1.0
+
+  "Reddit Comments":
+    base_url: "https://www.reddit.com/user/"
+    profile_url: "{username}/comments"
+    check_activity: true
+    weight: 0.8
+
+  "Reddit Submitted":
+    base_url: "https://www.reddit.com/user/"
+    profile_url: "{username}/submitted"
+    weight: 0.8
+
+  "Threads":
+    base_url: "https://www.threads.net/@"
+    profile_url: "{username}"
+    methods: ["status_code", "meta_tags"]
+    weight: 0.9
+
+  "Truth Social":
+    base_url: "https://truthsocial.com/@"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Gettr":
+    base_url: "https://gettr.com/user/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Parler":
+    base_url: "https://parler.com/user/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Minds":
+    base_url: "https://www.minds.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Gab":
+    base_url: "https://gab.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Mastodon (General)":
+    base_url: "https://mastodon.social/@"
+    profile_url: "{username}"
+    check_federation: true
+    weight: 0.8
+
+  "Bluesky":
+    base_url: "https://bsky.app/profile/"
+    profile_url: "{username}"
+    methods: ["api_check"]
+    api_endpoint: "https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor={username}"
+    weight: 0.9
+
+  "Discord":
+    base_url: "https://discord.com/users/"
+    profile_url: "{username}"
+    methods: ["status_code", "discord_api"]
+    api_endpoint: "https://discord.com/api/v9/users/{username}"
+    weight: 0.8
+
+  "Discord Bio":
+    base_url: "https://dsc.bio/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "VKontakte":
+    base_url: "https://vk.com/"
+    profile_url: "{username}"
+    methods: ["status_code", "vk_api"]
+    patterns:
+      found: ["id=\"page_name\"", "profile_info"]
+    weight: 0.9
+
+  "VKontakte ID":
+    base_url: "https://vk.com/id"
+    profile_url: "{username}"
+    numeric_id: true
+    weight: 0.8
+
+  "Odnoklassniki":
+    base_url: "https://ok.ru/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Weibo":
+    base_url: "https://weibo.com/"
+    profile_url: "{username}"
+    chinese_platform: true
+    weight: 0.8
+
+  "Weibo Mobile":
+    base_url: "https://m.weibo.cn/u/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Douyin":
+    base_url: "https://www.douyin.com/user/"
+    profile_url: "{username}"
+    chinese_platform: true
+    weight: 0.8
+
+  "QQ":
+    base_url: "https://user.qzone.qq.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Bilibili":
+    base_url: "https://space.bilibili.com/"
+    profile_url: "{username}"
+    chinese_platform: true
+    weight: 0.9
+
+  "Zhihu":
+    base_url: "https://www.zhihu.com/people/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Tieba":
+    base_url: "https://tieba.baidu.com/home/main?id="
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Xiaohongshu":
+    base_url: "https://www.xiaohongshu.com/user/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Telegram":
+    base_url: "https://t.me/"
+    profile_url: "{username}"
+    methods: ["instant_check"]
+    patterns:
+      found: ["tgme_page_title", "tgme_page_description"]
+    weight: 1.0
+
+  "Telegram Channel":
+    base_url: "https://t.me/s/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Telegram Group":
+    base_url: "https://t.me/joinchat/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Signal":
+    base_url: "https://signal.group/#"
+    profile_url: "{username}"
+    encrypted_check: true
+    weight: 0.6
+
+  "WhatsApp":
+    base_url: "https://wa.me/"
+    profile_url: "{username}"
+    phone_number_based: true
+    weight: 0.5
+
+  "Line":
+    base_url: "https://line.me/ti/p/~"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "KakaoTalk":
+    base_url: "https://pf.kakao.com/"
+    profile_url: "{username}"
+    korean_platform: true
+    weight: 0.7
+
+  "WeChat":
+    base_url: "https://open.weixin.qq.com/"
+    profile_url: "{username}"
+    requires_qr: true
+    weight: 0.4
+
+  "Viber":
+    base_url: "https://chats.viber.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Clubhouse":
+    base_url: "https://www.joinclubhouse.com/@"
+    profile_url: "{username}"
+    methods: ["api_check"]
+    weight: 0.7
+
+  "Houseparty":
+    base_url: "https://app.houseparty.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Yubo":
+    base_url: "https://yubo.live/profile/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "YOLO":
+    base_url: "https://yolo.com/"
+    profile_url: "{username}"
+    weight: 0.5
+
+  "LMK":
+    base_url: "https://lmk.com/"
+    profile_url: "{username}"
+    weight: 0.5
+
+  "Wink":
+    base_url: "https://wink.com/"
+    profile_url: "{username}"
+    weight: 0.5
+
+  "Yik Yak":
+    base_url: "https://www.yikyak.com/"
+    profile_url: "{username}"
+    weight: 0.5
+
+  "MeetMe":
+    base_url: "https://www.meetme.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Skout":
+    base_url: "https://www.skout.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Tagged":
+    base_url: "https://www.tagged.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Badoo":
+    base_url: "https://badoo.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Bumble":
+    base_url: "https://bumble.com/@"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Tinder":
+    base_url: "https://tinder.com/@"
+    profile_url: "{username}"
+    requires_app: true
+    weight: 0.5
+
+  "Hinge":
+    base_url: "https://hinge.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Grindr":
+    base_url: "https://www.grindr.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Scruff":
+    base_url: "https://www.scruff.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Recon":
+    base_url: "https://recon.com/"
+    profile_url: "{username}"
+    weight: 0.5
+
+  "Happn":
+    base_url: "https://happn.com/"
+    profile_url: "{username}"
+    weight: 0.5
+
+  # ======================= PLATAFORMAS DE DESARROLLO (40+) =======================
+  "GitHub":
+    base_url: "https://github.com/"
+    profile_url: "{username}"
+    methods: ["status_code", "api_check", "contributions"]
+    patterns:
+      found: ["vcard-names", "js-yearly-contributions", "user-profile"]
+    api_endpoint: "https://api.github.com/users/{username}"
+    weight: 1.0
+
+  "GitHub Gists":
+    base_url: "https://gist.github.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "GitLab":
+    base_url: "https://gitlab.com/"
+    profile_url: "{username}"
+    methods: ["status_code", "gitlab_api"]
+    api_endpoint: "https://gitlab.com/api/v4/users?username={username}"
+    weight: 1.0
+
+  "GitLab Self-Hosted":
+    base_url: "https://gitlab.example.com/"  # Se actualiza dinámicamente
+    profile_url: "{username}"
+    custom_domain: true
+    weight: 0.8
+
+  "Bitbucket":
+    base_url: "https://bitbucket.org/"
+    profile_url: "{username}/"
+    methods: ["status_code", "api_check"]
+    api_endpoint: "https://api.bitbucket.org/2.0/users/{username}"
+    weight: 0.9
+
+  "SourceForge":
+    base_url: "https://sourceforge.net/u/"
+    profile_url: "{username}/"
+    weight: 0.8
+
+  "Codeberg":
+    base_url: "https://codeberg.org/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Gitea":
+    base_url: "https://gitea.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "NotABug":
+    base_url: "https://notabug.org/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Launchpad":
+    base_url: "https://launchpad.net/~"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Stack Overflow":
+    base_url: "https://stackoverflow.com/users/"
+    profile_url: "{username}"
+    methods: ["status_code", "stackexchange_api"]
+    patterns:
+      found: ["reputation", "badgecount", "user-info"]
+    api_endpoint: "https://api.stackexchange.com/2.3/users?order=desc&sort=reputation&inname={username}&site=stackoverflow"
+    weight: 1.0
+
+  "Stack Exchange":
+    base_url: "https://stackexchange.com/users/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Ask Ubuntu":
+    base_url: "https://askubuntu.com/users/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Super User":
+    base_url: "https://superuser.com/users/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Server Fault":
+    base_url: "https://serverfault.com/users/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Stack Apps":
+    base_url: "https://stackapps.com/users/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Mathematics Stack Exchange":
+    base_url: "https://math.stackexchange.com/users/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Cross Validated":
+    base_url: "https://stats.stackexchange.com/users/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "TeX - LaTeX":
+    base_url: "https://tex.stackexchange.com/users/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Dev.to":
+    base_url: "https://dev.to/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Hashnode":
+    base_url: "https://hashnode.com/@"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Medium":
+    base_url: "https://medium.com/@"
+    profile_url: "{username}"
+    methods: ["status_code", "rss_check"]
+    patterns:
+      found: ["userUserId", "postArticle"]
+    weight: 1.0
+
+  "Medium Publications":
+    base_url: "https://medium.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Substack":
+    base_url: "https://substack.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Ghost":
+    base_url: "https://{username}.ghost.io"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Devpost":
+    base_url: "https://devpost.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "CodePen":
+    base_url: "https://codepen.io/"
+    profile_url: "{username}"
+    methods: ["status_code", "json_api"]
+    patterns:
+      found: ["user-{username}", "pen-title"]
+    weight: 0.9
+
+  "CodeSandbox":
+    base_url: "https://codesandbox.io/u/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "JSFiddle":
+    base_url: "https://jsfiddle.net/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Replit":
+    base_url: "https://replit.com/@"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Glitch":
+    base_url: "https://glitch.com/@"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Observable":
+    base_url: "https://observablehq.com/@"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Kaggle":
+    base_url: "https://www.kaggle.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Kaggle Datasets":
+    base_url: "https://www.kaggle.com/datasets/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Kaggle Notebooks":
+    base_url: "https://www.kaggle.com/code/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Google Colab":
+    base_url: "https://colab.research.google.com/drive/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Jupyter Notebooks":
+    base_url: "https://nbviewer.org/github/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "RStudio Cloud":
+    base_url: "https://rstudio.cloud/project/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "DigitalOcean Apps":
+    base_url: "https://cloud.digitalocean.com/apps/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Heroku":
+    base_url: "https://dashboard.heroku.com/account/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.5
+
+  "Vercel":
+    base_url: "https://vercel.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Netlify":
+    base_url: "https://app.netlify.com/teams/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Cloudflare Pages":
+    base_url: "https://dash.cloudflare.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Firebase":
+    base_url: "https://console.firebase.google.com/project/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "AWS Console":
+    base_url: "https://console.aws.amazon.com/console/home"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.4
+
+  "Google Cloud":
+    base_url: "https://console.cloud.google.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.4
+
+  "Azure DevOps":
+    base_url: "https://dev.azure.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Docker Hub":
+    base_url: "https://hub.docker.com/u/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Docker Hub Organizations":
+    base_url: "https://hub.docker.com/orgs/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Quay.io":
+    base_url: "https://quay.io/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "npm":
+    base_url: "https://www.npmjs.com/~"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "PyPI":
+    base_url: "https://pypi.org/user/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "RubyGems":
+    base_url: "https://rubygems.org/profiles/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Crates.io":
+    base_url: "https://crates.io/users/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "NuGet":
+    base_url: "https://www.nuget.org/profiles/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Packagist":
+    base_url: "https://packagist.org/users/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Maven Central":
+    base_url: "https://repo1.maven.org/maven2/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Homebrew":
+    base_url: "https://formulae.brew.sh/formula/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Chocolatey":
+    base_url: "https://community.chocolatey.org/profiles/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "AUR":
+    base_url: "https://aur.archlinux.org/account/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Launchpad PPA":
+    base_url: "https://launchpad.net/~"
+    profile_url: "{username}"
+    weight: 0.7
+
+  # ======================= PLATAFORMAS DE DISEÑO Y CREATIVIDAD (30+) =======================
+  "Behance":
+    base_url: "https://www.behance.net/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Dribbble":
+    base_url: "https://dribbble.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Dribbble Teams":
+    base_url: "https://dribbble.com/"
+    profile_url: "{username}"
+    team_check: true
+    weight: 0.8
+
+  "Adobe Portfolio":
+    base_url: "https://{username}.myportfolio.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "Adobe Creative Cloud":
+    base_url: "https://creativecloud.adobe.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.5
+
+  "Figma":
+    base_url: "https://www.figma.com/@"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Figma Community":
+    base_url: "https://www.figma.com/community/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Figma Organization":
+    base_url: "https://www.figma.com/files/team/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Sketch Cloud":
+    base_url: "https://www.sketch.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "InVision":
+    base_url: "https://www.invisionapp.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Marvel App":
+    base_url: "https://marvelapp.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Proto.io":
+    base_url: "https://proto.io/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Framer":
+    base_url: "https://framer.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Webflow":
+    base_url: "https://webflow.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Webflow Designer":
+    base_url: "https://webflow.com/design/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Wix":
+    base_url: "https://www.wix.com/website/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Squarespace":
+    base_url: "https://{username}.squarespace.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Shopify":
+    base_url: "https://{username}.myshopify.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "Shopify Partners":
+    base_url: "https://www.shopify.com/partners/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Big Cartel":
+    base_url: "https://{username}.bigcartel.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Etsy":
+    base_url: "https://www.etsy.com/shop/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Etsy People":
+    base_url: "https://www.etsy.com/people/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Society6":
+    base_url: "https://society6.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Redbubble":
+    base_url: "https://www.redbubble.com/people/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Teepublic":
+    base_url: "https://www.teepublic.com/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Zazzle":
+    base_url: "https://www.zazzle.com/store/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "CafePress":
+    base_url: "https://www.cafepress.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Spreadshirt":
+    base_url: "https://www.spreadshirt.com/user/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Threadless":
+    base_url: "https://www.threadless.com/@"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Creative Market":
+    base_url: "https://creativemarket.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Envato Market":
+    base_url: "https://themeforest.net/user/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Envato Elements":
+    base_url: "https://elements.envato.com/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "GraphicRiver":
+    base_url: "https://graphicriver.net/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "VideoHive":
+    base_url: "https://videohive.net/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "AudioJungle":
+    base_url: "https://audiojungle.net/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "PhotoDune":
+    base_url: "https://photodune.net/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "3DOcean":
+    base_url: "https://3docean.net/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "CodeCanyon":
+    base_url: "https://codecanyon.net/user/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  # ======================= PLATAFORMAS DE VIDEO Y STREAMING (25+) =======================
+  "YouTube":
+    base_url: "https://www.youtube.com/@"
+    profile_url: "{username}"
+    methods: ["status_code", "youtube_api"]
+    patterns:
+      found: ["channel-name", "subscriber-count", "video-count"]
+    api_endpoint: "https://www.googleapis.com/youtube/v3/channels?part=snippet&forUsername={username}"
+    weight: 1.0
+
+  "YouTube User":
+    base_url: "https://www.youtube.com/user/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "YouTube C":
+    base_url: "https://www.youtube.com/c/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "YouTube Channel ID":
+    base_url: "https://www.youtube.com/channel/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Twitch":
+    base_url: "https://www.twitch.tv/"
+    profile_url: "{username}"
+    methods: ["status_code", "twitch_api"]
+    patterns:
+      found: ["live-indicator", "followers-count", "subscriber-count"]
+    api_endpoint: "https://api.twitch.tv/helix/users?login={username}"
+    weight: 1.0
+
+  "Twitch Clips":
+    base_url: "https://www.twitch.tv/"
+    profile_url: "{username}/clips"
+    weight: 0.8
+
+  "Twitch Videos":
+    base_url: "https://www.twitch.tv/"
+    profile_url: "{username}/videos"
+    weight: 0.8
+
+  "Twitch Teams":
+    base_url: "https://www.twitch.tv/team/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Trovo":
+    base_url: "https://trovo.live/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "DLive":
+    base_url: "https://dlive.tv/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Mixer (Archived)":
+    base_url: "https://mixer.com/"
+    profile_url: "{username}"
+    archived: true
+    weight: 0.5
+
+  "Caffeine":
+    base_url: "https://www.caffeine.tv/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Smashcast":
+    base_url: "https://www.smashcast.tv/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Picarto":
+    base_url: "https://picarto.tv/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "YouNow":
+    base_url: "https://www.younow.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Live.me":
+    base_url: "https://www.live.me/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Bigo Live":
+    base_url: "https://www.bigo.tv/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Uplive":
+    base_url: "https://www.uplive.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Vimeo":
+    base_url: "https://vimeo.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Vimeo On Demand":
+    base_url: "https://vimeo.com/ondemand/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Vimeo Staff Picks":
+    base_url: "https://vimeo.com/channels/staffpicks/uploader:"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Dailymotion":
+    base_url: "https://www.dailymotion.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Metacafe":
+    base_url: "https://www.metacafe.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Veoh":
+    base_url: "https://www.veoh.com/users/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "BitChute":
+    base_url: "https://www.bitchute.com/channel/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Odysee":
+    base_url: "https://odysee.com/@"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Rumble":
+    base_url: "https://rumble.com/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Brighteon":
+    base_url: "https://www.brighteon.com/channels/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "PeerTube":
+    base_url: "https://peertube.tv/accounts/"
+    profile_url: "{username}"
+    federated: true
+    weight: 0.7
+
+  "LBRY":
+    base_url: "https://lbry.tv/@"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "TikTok Live":
+    base_url: "https://www.tiktok.com/@"
+    profile_url: "{username}/live"
+    weight: 0.7
+
+  "Instagram Live":
+    base_url: "https://www.instagram.com/"
+    profile_url: "{username}/live"
+    weight: 0.6
+
+  "Facebook Live":
+    base_url: "https://www.facebook.com/"
+    profile_url: "{username}/live"
+    weight: 0.6
+
+  "YouTube Live":
+    base_url: "https://www.youtube.com/"
+    profile_url: "{username}/live"
+    weight: 0.6
+
+  # ======================= PLATAFORMAS DE FOTOGRAFÍA (20+) =======================
+  "Flickr":
+    base_url: "https://www.flickr.com/people/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Flickr Photos":
+    base_url: "https://www.flickr.com/photos/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "500px":
+    base_url: "https://500px.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Unsplash":
+    base_url: "https://unsplash.com/@"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Unsplash Collections":
+    base_url: "https://unsplash.com/collections/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Pexels":
+    base_url: "https://www.pexels.com/@"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Pixabay":
+    base_url: "https://pixabay.com/users/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Getty Images":
+    base_url: "https://www.gettyimages.com/photos/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Shutterstock":
+    base_url: "https://www.shutterstock.com/g/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Adobe Stock":
+    base_url: "https://stock.adobe.com/contributor/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "iStock":
+    base_url: "https://www.istockphoto.com/portfolio/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Depositphotos":
+    base_url: "https://depositphotos.com/portfolio-"
+    profile_url: "{username}.html"
+    weight: 0.7
+
+  "Dreamstime":
+    base_url: "https://www.dreamstime.com/"
+    profile_url: "{username}_info"
+    weight: 0.7
+
+  "123RF":
+    base_url: "https://www.123rf.com/profile_"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Alamy":
+    base_url: "https://www.alamy.com/portfolio/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "EyeEm":
+    base_url: "https://www.eyeem.com/u/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "VSCO":
+    base_url: "https://vsco.co/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "VSCO Grid":
+    base_url: "https://vsco.co/"
+    profile_url: "{username}/grid"
+    weight: 0.8
+
+  "Instagram Photography":
+    base_url: "https://www.instagram.com/"
+    profile_url: "{username}/"
+    category: "photography"
+    weight: 0.9
+
+  "DeviantArt":
+    base_url: "https://www.deviantart.com/"
+    profile_url: "{username}"
+    weight: 1.0
+
+  "DeviantArt Gallery":
+    base_url: "https://www.deviantart.com/"
+    profile_url: "{username}/gallery"
+    weight: 0.9
+
+  "ArtStation":
+    base_url: "https://www.artstation.com/"
+    profile_url: "{username}"
+    weight: 1.0
+
+  "ArtStation Likes":
+    base_url: "https://www.artstation.com/"
+    profile_url: "{username}/likes"
+    weight: 0.7
+
+  "CGSociety":
+    base_url: "https://cgsociety.org/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Behance Photography":
+    base_url: "https://www.behance.net/"
+    profile_url: "{username}"
+    category: "photography"
+    weight: 0.9
+
+  "Dribbble Photography":
+    base_url: "https://dribbble.com/"
+    profile_url: "{username}"
+    category: "photography"
+    weight: 0.8
+
+  "Pinterest Photography":
+    base_url: "https://www.pinterest.com/"
+    profile_url: "{username}/"
+    category: "photography"
+    weight: 0.8
+
+  "SmugMug":
+    base_url: "https://{username}.smugmug.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "Zenfolio":
+    base_url: "https://{username}.zenfolio.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "PhotoBucket":
+    base_url: "https://photobucket.com/user/"
+    profile_url: "{username}/profile"
+    weight: 0.7
+
+  "Imgur":
+    base_url: "https://imgur.com/user/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Imgur Albums":
+    base_url: "https://imgur.com/user/"
+    profile_url: "{username}/albums"
+    weight: 0.8
+
+  "Imgur Favorites":
+    base_url: "https://imgur.com/user/"
+    profile_url: "{username}/favorites"
+    weight: 0.7
+
+  "Giphy":
+    base_url: "https://giphy.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "GIPHY Channels":
+    base_url: "https://giphy.com/channels/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Tenor":
+    base_url: "https://tenor.com/users/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  # ======================= PLATAFORMAS DE MÚSICA Y AUDIO (25+) =======================
+  "Spotify":
+    base_url: "https://open.spotify.com/user/"
+    profile_url: "{username}"
+    methods: ["status_code", "spotify_api"]
+    api_endpoint: "https://api.spotify.com/v1/users/{username}"
+    weight: 1.0
+
+  "Spotify Artist":
+    base_url: "https://open.spotify.com/artist/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Apple Music":
+    base_url: "https://music.apple.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "SoundCloud":
+    base_url: "https://soundcloud.com/"
+    profile_url: "{username}"
+    weight: 1.0
+
+  "SoundCloud Tracks":
+    base_url: "https://soundcloud.com/"
+    profile_url: "{username}/tracks"
+    weight: 0.9
+
+  "SoundCloud Likes":
+    base_url: "https://soundcloud.com/"
+    profile_url: "{username}/likes"
+    weight: 0.8
+
+  "Bandcamp":
+    base_url: "https://bandcamp.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Bandcamp Artist":
+    base_url: "https://{username}.bandcamp.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.9
+
+  "YouTube Music":
+    base_url: "https://music.youtube.com/channel/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Deezer":
+    base_url: "https://www.deezer.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Tidal":
+    base_url: "https://tidal.com/browse/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Pandora":
+    base_url: "https://www.pandora.com/profile/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Last.fm":
+    base_url: "https://www.last.fm/user/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Last.fm Library":
+    base_url: "https://www.last.fm/user/"
+    profile_url: "{username}/library"
+    weight: 0.8
+
+  "Discogs":
+    base_url: "https://www.discogs.com/user/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Mixcloud":
+    base_url: "https://www.mixcloud.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Audius":
+    base_url: "https://audius.co/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "ReverbNation":
+    base_url: "https://www.reverbnation.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Beatport":
+    base_url: "https://www.beatport.com/artist/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Audiomack":
+    base_url: "https://audiomack.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "SoundClick":
+    base_url: "https://www.soundclick.com/artist/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Jamendo":
+    base_url: "https://www.jamendo.com/artist/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "NoiseTrade":
+    base_url: "https://noisetrade.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "ccMixter":
+    base_url: "https://ccmixter.org/api/query?datasource=people&username="
+    profile_url: "{username}"
+    api_check: true
+    weight: 0.6
+
+  "Free Music Archive":
+    base_url: "https://freemusicarchive.org/curator/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Internet Archive Audio":
+    base_url: "https://archive.org/details/@"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Patreon Music":
+    base_url: "https://www.patreon.com/"
+    profile_url: "{username}"
+    category: "music"
+    weight: 0.8
+
+  "Twitch Music":
+    base_url: "https://www.twitch.tv/"
+    profile_url: "{username}"
+    category: "music"
+    weight: 0.7
+
+  "Instagram Music":
+    base_url: "https://www.instagram.com/"
+    profile_url: "{username}/"
+    category: "music"
+    weight: 0.7
+
+  "TikTok Music":
+    base_url: "https://www.tiktok.com/@"
+    profile_url: "{username}"
+    category: "music"
+    weight: 0.7
+
+  # ======================= PLATAFORMAS DE GAMING (30+) =======================
+  "Steam":
+    base_url: "https://steamcommunity.com/id/"
+    profile_url: "{username}"
+    weight: 1.0
+
+  "Steam Profile ID":
+    base_url: "https://steamcommunity.com/profiles/"
+    profile_url: "{username}"
+    numeric_id: true
+    weight: 0.9
+
+  "Steam Groups":
+    base_url: "https://steamcommunity.com/groups/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Xbox Live":
+    base_url: "https://xboxgamertag.com/search/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Xbox API":
+    base_url: "https://xbl.io/api/v2/find/"
+    profile_url: "{username}"
+    api_check: true
+    weight: 0.8
+
+  "PlayStation Network":
+    base_url: "https://psnprofiles.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "PSN API":
+    base_url: "https://io.playstation.com/playstation/psn/public/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Nintendo Switch":
+    base_url: "https://lounge.nintendo.com/user/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Epic Games":
+    base_url: "https://www.epicgames.com/account/users/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.6
+
+  "EA Origin":
+    base_url: "https://www.origin.com/usa/en-us/profile/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Ubisoft":
+    base_url: "https://club.ubisoft.com/en-US/profile/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Battle.net":
+    base_url: "https://playoverwatch.com/en-us/career/pc/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Riot Games":
+    base_url: "https://www.leagueofgraphs.com/summoner/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Valorant Tracker":
+    base_url: "https://tracker.gg/valorant/profile/riot/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Fortnite Tracker":
+    base_url: "https://fortnitetracker.com/profile/all/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Apex Legends Tracker":
+    base_url: "https://apex.tracker.gg/apex/profile/origin/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Destiny Tracker":
+    base_url: "https://destinytracker.com/d2/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Overwatch Tracker":
+    base_url: "https://overwatchtracker.com/profile/pc/global/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "CS:GO Tracker":
+    base_url: "https://tracker.gg/csgo/profile/steam/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Dota 2 Tracker":
+    base_url: "https://www.dotabuff.com/players/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Twitch Gaming":
+    base_url: "https://www.twitch.tv/"
+    profile_url: "{username}"
+    category: "gaming"
+    weight: 0.9
+
+  "YouTube Gaming":
+    base_url: "https://www.youtube.com/@"
+    profile_url: "{username}"
+    category: "gaming"
+    weight: 0.9
+
+  "Discord Gaming":
+    base_url: "https://discord.com/users/"
+    profile_url: "{username}"
+    category: "gaming"
+    weight: 0.8
+
+  "Reddit Gaming":
+    base_url: "https://www.reddit.com/user/"
+    profile_url: "{username}"
+    category: "gaming"
+    weight: 0.8
+
+  "Mixer Gaming":
+    base_url: "https://mixer.com/"
+    profile_url: "{username}"
+    category: "gaming"
+    archived: true
+    weight: 0.6
+
+  "Facebook Gaming":
+    base_url: "https://www.facebook.com/gaming/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Trovo Gaming":
+    base_url: "https://trovo.live/"
+    profile_url: "{username}"
+    category: "gaming"
+    weight: 0.7
+
+  "Speedrun.com":
+    base_url: "https://www.speedrun.com/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "TrueAchievements":
+    base_url: "https://www.trueachievements.com/gamer/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "TrueTrophies":
+    base_url: "https://www.truetrophies.com/gamer/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Exophase":
+    base_url: "https://www.exophase.com/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "GameFAQs":
+    base_url: "https://gamefaqs.gamespot.com/user/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Giant Bomb":
+    base_url: "https://www.giantbomb.com/profile/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "IGN Boards":
+    base_url: "https://www.ign.com/boards/members/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "NeoGAF":
+    base_url: "https://www.neogaf.com/members/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "ResetEra":
+    base_url: "https://www.resetera.com/members/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Kongregate":
+    base_url: "https://www.kongregate.com/accounts/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Newgrounds":
+    base_url: "https://{username}.newgrounds.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "Itch.io":
+    base_url: "https://{username}.itch.io"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.9
+
+  "Game Jolt":
+    base_url: "https://gamejolt.com/@"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Roblox":
+    base_url: "https://www.roblox.com/user/"
+    profile_url: "{username}"
+    numeric_id: true
+    weight: 0.9
+
+  "Minecraft":
+    base_url: "https://namemc.com/profile/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Mojang API":
+    base_url: "https://api.mojang.com/users/profiles/minecraft/"
+    profile_url: "{username}"
+    api_check: true
+    weight: 1.0
+
+  "Hypixel":
+    base_url: "https://hypixel.net/player/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  # ======================= PLATAFORMAS DE FOROS Y COMUNIDADES (40+) =======================
+  "Reddit (all subs)":
+    base_url: "https://www.reddit.com/user/"
+    profile_url: "{username}"
+    weight: 1.0
+
+  "Reddit Comments":
+    base_url: "https://www.reddit.com/user/"
+    profile_url: "{username}/comments"
+    weight: 0.9
+
+  "Reddit Submitted":
+    base_url: "https://www.reddit.com/user/"
+    profile_url: "{username}/submitted"
+    weight: 0.9
+
+  "Reddit Gilded":
+    base_url: "https://www.reddit.com/user/"
+    profile_url: "{username}/gilded"
+    weight: 0.8
+
+  "Reddit Saved":
+    base_url: "https://www.reddit.com/user/"
+    profile_url: "{username}/saved"
+    requires_login: true
+    weight: 0.6
+
+  "4chan":
+    base_url: "https://find.4chan.org/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "4chan Archive":
+    base_url: "https://archive.4plebs.org/_/search/text/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "8kun":
+    base_url: "https://8kun.top/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Something Awful":
+    base_url: "https://forums.somethingawful.com/member.php?username="
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Gaia Online":
+    base_url: "https://www.gaiaonline.com/profiles/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Nexus Mods":
+    base_url: "https://www.nexusmods.com/users/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Mod DB":
+    base_url: "https://www.moddb.com/members/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Indie DB":
+    base_url: "https://www.indiedb.com/members/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "CurseForge":
+    base_url: "https://www.curseforge.com/members/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Bukkit":
+    base_url: "https://dev.bukkit.org/members/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "SpigotMC":
+    base_url: "https://www.spigotmc.org/members/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "MC-Market":
+    base_url: "https://www.mc-market.org/members/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Planet Minecraft":
+    base_url: "https://www.planetminecraft.com/member/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "BitcoinTalk":
+    base_url: "https://bitcointalk.org/index.php?action=profile;u="
+    profile_url: "{username}"
+    numeric_id: true
+    weight: 0.8
+
+  "CryptoCompare":
+    base_url: "https://www.cryptocompare.com/profile/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Stack Overflow (all)":
+    base_url: "https://stackoverflow.com/users/"
+    profile_url: "{username}"
+    weight: 1.0
+
+  "Stack Exchange Network":
+    base_url: "https://stackexchange.com/users/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Quora":
+    base_url: "https://www.quora.com/profile/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Quora Answers":
+    base_url: "https://www.quora.com/profile/"
+    profile_url: "{username}/answers"
+    weight: 0.8
+
+  "Quora Questions":
+    base_url: "https://www.quora.com/profile/"
+    profile_url: "{username}/questions"
+    weight: 0.8
+
+  "Yahoo Answers":
+    base_url: "https://answers.yahoo.com/user/profile"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Ask.fm":
+    base_url: "https://ask.fm/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Brainly":
+    base_url: "https://brainly.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Chegg":
+    base_url: "https://www.chegg.com/profile/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Course Hero":
+    base_url: "https://www.coursehero.com/profile/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Quizlet":
+    base_url: "https://quizlet.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Duolingo":
+    base_url: "https://www.duolingo.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Memrise":
+    base_url: "https://www.memrise.com/user/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "AnkiWeb":
+    base_url: "https://ankiweb.net/account/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.6
+
+  "Goodreads":
+    base_url: "https://www.goodreads.com/user/show/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Goodreads Reviews":
+    base_url: "https://www.goodreads.com/review/list/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "LibraryThing":
+    base_url: "https://www.librarything.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Shelfari":
+    base_url: "https://www.shelfari.com/"
+    profile_url: "{username}"
+    archived: true
+    weight: 0.5
+
+  "BookCrossing":
+    base_url: "https://www.bookcrossing.com/mybookshelf/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Letterboxd":
+    base_url: "https://letterboxd.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "IMDb":
+    base_url: "https://www.imdb.com/user/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "IMDb Reviews":
+    base_url: "https://www.imdb.com/user/"
+    profile_url: "{username}/reviews"
+    weight: 0.8
+
+  "MyAnimeList":
+    base_url: "https://myanimelist.net/profile/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "AniList":
+    base_url: "https://anilist.co/user/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Kitsu":
+    base_url: "https://kitsu.io/users/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Anime-Planet":
+    base_url: "https://www.anime-planet.com/users/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "MangaUpdates":
+    base_url: "https://www.mangaupdates.com/profile.html?id="
+    profile_url: "{username}"
+    weight: 0.8
+
+  "MyDramaList":
+    base_url: "https://mydramalist.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Trakt":
+    base_url: "https://trakt.tv/users/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "TV Time":
+    base_url: "https://www.tvtime.com/en/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Serializd":
+    base_url: "https://www.serializd.com/user/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  # ======================= PLATAFORMAS DE NEGOCIOS Y PROFESIONALES (35+) =======================
+  "LinkedIn":
+    base_url: "https://www.linkedin.com/in/"
+    profile_url: "{username}"
+    weight: 1.0
+
+  "LinkedIn Company":
+    base_url: "https://www.linkedin.com/company/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "LinkedIn Sales Navigator":
+    base_url: "https://www.linkedin.com/sales/people/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.7
+
+  "AngelList":
+    base_url: "https://angel.co/u/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "AngelList Company":
+    base_url: "https://angel.co/company/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Crunchbase":
+    base_url: "https://www.crunchbase.com/person/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Crunchbase Organization":
+    base_url: "https://www.crunchbase.com/organization/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "PitchBook":
+    base_url: "https://pitchbook.com/profiles/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.6
+
+  "Glassdoor":
+    base_url: "https://www.glassdoor.com/member/profile/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.6
+
+  "Indeed":
+    base_url: "https://www.indeed.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Monster":
+    base_url: "https://www.monster.com/profile/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "CareerBuilder":
+    base_url: "https://www.careerbuilder.com/people/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "ZipRecruiter":
+    base_url: "https://www.ziprecruiter.com/profile/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Upwork":
+    base_url: "https://www.upwork.com/freelancers/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Upwork Agency":
+    base_url: "https://www.upwork.com/agencies/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Fiverr":
+    base_url: "https://www.fiverr.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Fiverr Business":
+    base_url: "https://business.fiverr.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Freelancer":
+    base_url: "https://www.freelancer.com/u/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Freelancer Projects":
+    base_url: "https://www.freelancer.com/projects/by/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Toptal":
+    base_url: "https://www.toptal.com/resume/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Guru":
+    base_url: "https://www.guru.com/freelancers/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "PeoplePerHour":
+    base_url: "https://www.peopleperhour.com/freelancer/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "99designs":
+    base_url: "https://99designs.com/profiles/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "DesignCrowd":
+    base_url: "https://www.designcrowd.com/designer/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "CrowdSpring":
+    base_url: "https://www.crowdspring.com/designer/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Behance (Pro)":
+    base_url: "https://www.behance.net/"
+    profile_url: "{username}"
+    category: "professional"
+    weight: 0.9
+
+  "Dribbble (Pro)":
+    base_url: "https://dribbble.com/"
+    profile_url: "{username}"
+    category: "professional"
+    weight: 0.9
+
+  "GitHub (Pro)":
+    base_url: "https://github.com/"
+    profile_url: "{username}"
+    category: "professional"
+    weight: 1.0
+
+  "GitLab (Pro)":
+    base_url: "https://gitlab.com/"
+    profile_url: "{username}"
+    category: "professional"
+    weight: 0.9
+
+  "Bitbucket (Pro)":
+    base_url: "https://bitbucket.org/"
+    profile_url: "{username}/"
+    category: "professional"
+    weight: 0.8
+
+  "Stack Overflow (Pro)":
+    base_url: "https://stackoverflow.com/users/"
+    profile_url: "{username}"
+    category: "professional"
+    weight: 1.0
+
+  "Medium (Pro)":
+    base_url: "https://medium.com/@"
+    profile_url: "{username}"
+    category: "professional"
+    weight: 0.9
+
+  "Dev.to (Pro)":
+    base_url: "https://dev.to/"
+    profile_url: "{username}"
+    category: "professional"
+    weight: 0.9
+
+  "Hashnode (Pro)":
+    base_url: "https://hashnode.com/@"
+    profile_url: "{username}"
+    category: "professional"
+    weight: 0.8
+
+  "Substack (Pro)":
+    base_url: "https://substack.com/profile/"
+    profile_url: "{username}"
+    category: "professional"
+    weight: 0.8
+
+  "Product Hunt":
+    base_url: "https://www.producthunt.com/@"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Product Hunt Maker":
+    base_url: "https://www.producthunt.com/makers/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Hacker News":
+    base_url: "https://news.ycombinator.com/user?id="
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Indie Hackers":
+    base_url: "https://www.indiehackers.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Starter Story":
+    base_url: "https://www.starterstory.com/users/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Y Combinator":
+    base_url: "https://www.ycombinator.com/companies/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "TechCrunch":
+    base_url: "https://techcrunch.com/author/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "VentureBeat":
+    base_url: "https://venturebeat.com/author/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "The Verge":
+    base_url: "https://www.theverge.com/users/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Wired":
+    base_url: "https://www.wired.com/author/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Forbes":
+    base_url: "https://www.forbes.com/profile/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Business Insider":
+    base_url: "https://www.businessinsider.com/author/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Bloomberg":
+    base_url: "https://www.bloomberg.com/authors/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Reuters":
+    base_url: "https://www.reuters.com/authors/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Associated Press":
+    base_url: "https://apnews.com/author/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  # ======================= PLATAFORMAS DE EDUCACIÓN Y ACADÉMICA (25+) =======================
+  "ResearchGate":
+    base_url: "https://www.researchgate.net/profile/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Google Scholar":
+    base_url: "https://scholar.google.com/citations?user="
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Academia.edu":
+    base_url: "https://{username}.academia.edu"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.9
+
+  "ORCID":
+    base_url: "https://orcid.org/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "arXiv":
+    base_url: "https://arxiv.org/a/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "SSRN":
+    base_url: "https://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id="
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Mendeley":
+    base_url: "https://www.mendeley.com/profiles/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Zotero":
+    base_url: "https://www.zotero.org/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "CiteULike":
+    base_url: "http://www.citeulike.org/user/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "PubMed":
+    base_url: "https://pubmed.ncbi.nlm.nih.gov/?term="
+    profile_url: "{username}[Author]"
+    weight: 0.8
+
+  "IEEE Xplore":
+    base_url: "https://ieeexplore.ieee.org/author/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "ACM Digital Library":
+    base_url: "https://dl.acm.org/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "ScienceDirect":
+    base_url: "https://www.sciencedirect.com/science/article/abs/pii/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "SpringerLink":
+    base_url: "https://link.springer.com/search?query="
+    profile_url: "{username}&facet-creator=%22{username}%22"
+    weight: 0.7
+
+  "Wiley Online Library":
+    base_url: "https://onlinelibrary.wiley.com/search/advanced?author="
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Nature Portfolio":
+    base_url: "https://www.nature.com/search?author="
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Science Magazine":
+    base_url: "https://www.science.org/search?author="
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Cell Press":
+    base_url: "https://www.cell.com/search?query="
+    profile_url: "{username}"
+    weight: 0.7
+
+  "PLOS ONE":
+    base_url: "https://journals.plos.org/plosone/search?q="
+    profile_url: "{username}&filterAuthors={username}"
+    weight: 0.7
+
+  "bioRxiv":
+    base_url: "https://www.biorxiv.org/search/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "medRxiv":
+    base_url: "https://www.medrxiv.org/search/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "ChemRxiv":
+    base_url: "https://chemrxiv.org/engage/chemrxiv/public-dashboard"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Zenodo":
+    base_url: "https://zenodo.org/search?q="
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Figshare":
+    base_url: "https://figshare.com/authors/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Dryad":
+    base_url: "https://datadryad.org/search?q="
+    profile_url: "{username}"
+    weight: 0.6
+
+  "GitHub (Academic)":
+    base_url: "https://github.com/"
+    profile_url: "{username}"
+    category: "academic"
+    weight: 1.0
+
+  "GitLab (Academic)":
+    base_url: "https://gitlab.com/"
+    profile_url: "{username}"
+    category: "academic"
+    weight: 0.9
+
+  "Kaggle (Academic)":
+    base_url: "https://www.kaggle.com/"
+    profile_url: "{username}"
+    category: "academic"
+    weight: 0.9
+
+  "Open Science Framework":
+    base_url: "https://osf.io/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Coursera":
+    base_url: "https://www.coursera.org/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "edX":
+    base_url: "https://courses.edx.org/u/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Udemy":
+    base_url: "https://www.udemy.com/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Udacity":
+    base_url: "https://www.udacity.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Khan Academy":
+    base_url: "https://www.khanacademy.org/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Brilliant":
+    base_url: "https://brilliant.org/profile/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "SoloLearn":
+    base_url: "https://www.sololearn.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Codecademy":
+    base_url: "https://www.codecademy.com/profiles/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "FreeCodeCamp":
+    base_url: "https://www.freecodecamp.org/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Exercism":
+    base_url: "https://exercism.org/profiles/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "LeetCode":
+    base_url: "https://leetcode.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "HackerRank":
+    base_url: "https://www.hackerrank.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "CodeWars":
+    base_url: "https://www.codewars.com/users/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "TopCoder":
+    base_url: "https://www.topcoder.com/members/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "AtCoder":
+    base_url: "https://atcoder.jp/users/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Codeforces":
+    base_url: "https://codeforces.com/profile/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Sphere Online Judge":
+    base_url: "https://www.spoj.com/users/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Project Euler":
+    base_url: "https://projecteuler.net/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Rosalind":
+    base_url: "http://rosalind.info/users/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  # ======================= PLATAFORMAS DE CRIPTO Y BLOCKCHAIN (20+) =======================
+  "Bitcoin Forum":
+    base_url: "https://bitcointalk.org/index.php?action=profile;u="
+    profile_url: "{username}"
+    numeric_id: true
+    weight: 0.8
+
+  "Reddit Crypto":
+    base_url: "https://www.reddit.com/user/"
+    profile_url: "{username}"
+    category: "crypto"
+    weight: 0.9
+
+  "Twitter Crypto":
+    base_url: "https://twitter.com/"
+    profile_url: "{username}"
+    category: "crypto"
+    weight: 1.0
+
+  "Telegram Crypto":
+    base_url: "https://t.me/"
+    profile_url: "{username}"
+    category: "crypto"
+    weight: 0.9
+
+  "GitHub Crypto":
+    base_url: "https://github.com/"
+    profile_url: "{username}"
+    category: "crypto"
+    weight: 0.9
+
+  "Medium Crypto":
+    base_url: "https://medium.com/@"
+    profile_url: "{username}"
+    category: "crypto"
+    weight: 0.8
+
+  "CoinMarketCap":
+    base_url: "https://coinmarketcap.com/community/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "CoinGecko":
+    base_url: "https://www.coingecko.com/en/portfolio/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "CryptoCompare":
+    base_url: "https://www.cryptocompare.com/portfolio/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Binance":
+    base_url: "https://www.binance.com/en/profile/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.6
+
+  "Coinbase":
+    base_url: "https://www.coinbase.com/people/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.6
+
+  "Kraken":
+    base_url: "https://www.kraken.com/u/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.5
+
+  "Bittrex":
+    base_url: "https://global.bittrex.com/account/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.5
+
+  "Poloniex":
+    base_url: "https://poloniex.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.5
+
+  "KuCoin":
+    base_url: "https://www.kucoin.com/account/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.5
+
+  "FTX (Archive)":
+    base_url: "https://ftx.com/"
+    profile_url: "{username}"
+    archived: true
+    weight: 0.4
+
+  "Bybit":
+    base_url: "https://www.bybit.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.5
+
+  "Bitfinex":
+    base_url: "https://www.bitfinex.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.5
+
+  "OKX":
+    base_url: "https://www.okx.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.5
+
+  "Huobi":
+    base_url: "https://www.huobi.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.5
+
+  "Gate.io":
+    base_url: "https://www.gate.io/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.5
+
+  "MEXC":
+    base_url: "https://www.mexc.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.5
+
+  "Crypto Twitter Lists":
+    base_url: "https://twitter.com/i/lists/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Etherscan":
+    base_url: "https://etherscan.io/address/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "BscScan":
+    base_url: "https://bscscan.com/address/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "PolygonScan":
+    base_url: "https://polygonscan.com/address/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Arbiscan":
+    base_url: "https://arbiscan.io/address/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Solana Explorer":
+    base_url: "https://explorer.solana.com/address/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Algorand Explorer":
+    base_url: "https://algoexplorer.io/address/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Cardano Explorer":
+    base_url: "https://explorer.cardano.org/en/address?"
+    profile_url: "address={username}"
+    weight: 0.7
+
+  "Avalanche Explorer":
+    base_url: "https://explorer.avax.network/address/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Fantom Explorer":
+    base_url: "https://ftmscan.com/address/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  # ======================= PLATAFORMAS DE NOTICIAS Y BLOGS (30+) =======================
+  "WordPress.com":
+    base_url: "https://{username}.wordpress.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.9
+
+  "WordPress.org":
+    base_url: "https://profiles.wordpress.org/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Blogger":
+    base_url: "https://{username}.blogspot.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.9
+
+  "Blogger Profile":
+    base_url: "https://www.blogger.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Tumblr":
+    base_url: "https://{username}.tumblr.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.9
+
+  "Tumblr API":
+    base_url: "https://api.tumblr.com/v2/blog/"
+    profile_url: "{username}.tumblr.com/info"
+    api_check: true
+    weight: 0.8
+
+  "Ghost":
+    base_url: "https://{username}.ghost.io"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "Jekyll":
+    base_url: "https://{username}.github.io"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.9
+
+  "Hugo":
+    base_url: "https://{username}.netlify.app"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "Gatsby":
+    base_url: "https://{username}.gatsbyjs.io"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "Next.js":
+    base_url: "https://{username}.vercel.app"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "Nuxt.js":
+    base_url: "https://{username}.netlify.app"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Medium Publications":
+    base_url: "https://medium.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Substack":
+    base_url: "https://{username}.substack.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.9
+
+  "Beehiiv":
+    base_url: "https://{username}.beehiiv.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "ConvertKit":
+    base_url: "https://{username}.ck.page"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Mailchimp":
+    base_url: "https://{username}.list-manage.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Revue":
+    base_url: "https://www.getrevue.co/profile/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Buttondown":
+    base_url: "https://buttondown.email/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "TinyLetter":
+    base_url: "https://tinyletter.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Anchor.fm":
+    base_url: "https://anchor.fm/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Simplecast":
+    base_url: "https://simplecast.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Transistor.fm":
+    base_url: "https://transistor.fm/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Buzzsprout":
+    base_url: "https://www.buzzsprout.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Libsyn":
+    base_url: "https://{username}.libsyn.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Blubrry":
+    base_url: "https://www.blubrry.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Podbean":
+    base_url: "https://{username}.podbean.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Acast":
+    base_url: "https://www.acast.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Spotify Podcasts":
+    base_url: "https://open.spotify.com/show/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Apple Podcasts":
+    base_url: "https://podcasts.apple.com/podcast/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Google Podcasts":
+    base_url: "https://podcasts.google.com/feed/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Pocket Casts":
+    base_url: "https://pca.st/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Overcast":
+    base_url: "https://overcast.fm/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Castbox":
+    base_url: "https://castbox.fm/channel/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Player FM":
+    base_url: "https://player.fm/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  # ======================= PLATAFORMAS DE VIAJES Y LOCACIÓN (15+) =======================
+  "TripAdvisor":
+    base_url: "https://www.tripadvisor.com/members/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "TripAdvisor Reviews":
+    base_url: "https://www.tripadvisor.com/Profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Yelp":
+    base_url: "https://www.yelp.com/user_details?userid="
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Yelp Reviews":
+    base_url: "https://www.yelp.com/user_details_reviews_self?userid="
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Foursquare":
+    base_url: "https://foursquare.com/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Swarm":
+    base_url: "https://www.swarmapp.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Untappd":
+    base_url: "https://untappd.com/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Untappd Badges":
+    base_url: "https://untappd.com/user/"
+    profile_url: "{username}/badges"
+    weight: 0.7
+
+  "BeerAdvocate":
+    base_url: "https://www.beeradvocate.com/community/members/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "RateBeer":
+    base_url: "https://www.ratebeer.com/user/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "AllTrails":
+    base_url: "https://www.alltrails.com/members/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Strava":
+    base_url: "https://www.strava.com/athletes/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Strava Segments":
+    base_url: "https://www.strava.com/athletes/"
+    profile_url: "{username}/segments"
+    weight: 0.7
+
+  "MapMyRun":
+    base_url: "https://www.mapmyrun.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Runkeeper":
+    base_url: "https://runkeeper.com/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Nike Run Club":
+    base_url: "https://www.nike.com/member/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Adidas Running":
+    base_url: "https://www.adidas.com/us/myrunning"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Garmin Connect":
+    base_url: "https://connect.garmin.com/modern/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Fitbit":
+    base_url: "https://www.fitbit.com/user/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Apple Fitness+":
+    base_url: "https://fitness.apple.com/"
+    profile_url: "{username}"
+    requires_app: true
+    weight: 0.6
+
+  "Peloton":
+    base_url: "https://members.onepeloton.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "MyFitnessPal":
+    base_url: "https://www.myfitnesspal.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Lose It!":
+    base_url: "https://www.loseit.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Cronometer":
+    base_url: "https://cronometer.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "FatSecret":
+    base_url: "https://www.fatsecret.com/member/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  # ======================= PLATAFORMAS DE COMPRAS Y E-COMMERCE (20+) =======================
+  "Amazon":
+    base_url: "https://www.amazon.com/gp/profile/amzn1.account."
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Amazon Reviews":
+    base_url: "https://www.amazon.com/gp/customer-reviews/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Amazon Wishlist":
+    base_url: "https://www.amazon.com/hz/wishlist/ls/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "eBay":
+    base_url: "https://www.ebay.com/usr/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "eBay Feedback":
+    base_url: "https://www.ebay.com/fdbk/feedback_profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Etsy":
+    base_url: "https://www.etsy.com/shop/"
+    profile_url: "{username}"
+    weight: 1.0
+
+  "Etsy Reviews":
+    base_url: "https://www.etsy.com/shop/"
+    profile_url: "{username}/reviews"
+    weight: 0.9
+
+  "Etsy Favorites":
+    base_url: "https://www.etsy.com/people/"
+    profile_url: "{username}/favorites"
+    weight: 0.8
+
+  "Depop":
+    base_url: "https://www.depop.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Poshmark":
+    base_url: "https://poshmark.com/closet/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Mercari":
+    base_url: "https://www.mercari.com/u/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Grailed":
+    base_url: "https://www.grailed.com/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "StockX":
+    base_url: "https://stockx.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "GOAT":
+    base_url: "https://www.goat.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Flight Club":
+    base_url: "https://www.flightclub.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Shopify Store":
+    base_url: "https://{username}.myshopify.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.9
+
+  "Big Cartel":
+    base_url: "https://{username}.bigcartel.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "Squarespace Store":
+    base_url: "https://{username}.squarespace.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "Wix Store":
+    base_url: "https://{username}.wixsite.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "Weebly Store":
+    base_url: "https://{username}.weebly.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "ShopStyle":
+    base_url: "https://www.shopstyle.com/people/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "LikeToKnowIt":
+    base_url: "https://www.liketoknow.it/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Rakuten":
+    base_url: "https://www.rakuten.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Honey":
+    base_url: "https://www.joinhoney.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "RetailMeNot":
+    base_url: "https://www.retailmenot.com/profiles/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Slickdeals":
+    base_url: "https://slickdeals.net/forums/member.php"
+    profile_url: "?u={username}"
+    weight: 0.7
+
+  # ======================= PLATAFORMAS DE SALUD Y BIENESTAR (15+) =======================
+  "MyFitnessPal":
+    base_url: "https://www.myfitnesspal.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Lose It!":
+    base_url: "https://www.loseit.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Cronometer":
+    base_url: "https://cronometer.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "FatSecret":
+    base_url: "https://www.fatsecret.com/member/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "SparkPeople":
+    base_url: "https://www.sparkpeople.com/mypage.asp?id="
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Weight Watchers":
+    base_url: "https://www.weightwatchers.com/us/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Noom":
+    base_url: "https://www.noom.com/"
+    profile_url: "{username}"
+    requires_app: true
+    weight: 0.5
+
+  "Headspace":
+    base_url: "https://www.headspace.com/"
+    profile_url: "{username}"
+    requires_app: true
+    weight: 0.5
+
+  "Calm":
+    base_url: "https://www.calm.com/"
+    profile_url: "{username}"
+    requires_app: true
+    weight: 0.5
+
+  "BetterHelp":
+    base_url: "https://www.betterhelp.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.4
+
+  "Talkspace":
+    base_url: "https://www.talkspace.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.4
+
+  "7 Cups":
+    base_url: "https://www.7cups.com/@"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Pacifica":
+    base_url: "https://www.pacifica.com/"
+    profile_url: "{username}"
+    requires_app: true
+    weight: 0.5
+
+  "Moodpath":
+    base_url: "https://moodpath.com/"
+    profile_url: "{username}"
+    requires_app: true
+    weight: 0.5
+
+  "Daylio":
+    base_url: "https://daylio.net/"
+    profile_url: "{username}"
+    requires_app: true
+    weight: 0.5
+
+  "Habitica":
+    base_url: "https://habitica.com/profile/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "SuperBetter":
+    base_url: "https://www.superbetter.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Productive":
+    base_url: "https://productiveapp.io/"
+    profile_url: "{username}"
+    requires_app: true
+    weight: 0.5
+
+  "Forest":
+    base_url: "https://www.forestapp.cc/"
+    profile_url: "{username}"
+    requires_app: true
+    weight: 0.5
+
+  "Flora":
+    base_url: "https://flora.app/"
+    profile_url: "{username}"
+    requires_app: true
+    weight: 0.5
+
+  # ======================= PLATAFORMAS DE GOBIERNO Y OFICIALES (10+) =======================
+  "USA.gov":
+    base_url: "https://www.usa.gov/"
+    profile_url: "{username}"
+    government: true
+    weight: 0.3
+
+  "Data.gov":
+    base_url: "https://data.gov/profile/"
+    profile_url: "{username}"
+    government: true
+    weight: 0.4
+
+  "EU Open Data Portal":
+    base_url: "https://data.europa.eu/"
+    profile_url: "{username}"
+    government: true
+    weight: 0.3
+
+  "UN Data":
+    base_url: "https://data.un.org/"
+    profile_url: "{username}"
+    government: true
+    weight: 0.3
+
+  "World Bank":
+    base_url: "https://data.worldbank.org/"
+    profile_url: "{username}"
+    government: true
+    weight: 0.3
+
+  "IMF":
+    base_url: "https://www.imf.org/"
+    profile_url: "{username}"
+    government: true
+    weight: 0.3
+
+  "OECD":
+    base_url: "https://data.oecd.org/"
+    profile_url: "{username}"
+    government: true
+    weight: 0.3
+
+  "WHO":
+    base_url: "https://www.who.int/"
+    profile_url: "{username}"
+    government: true
+    weight: 0.3
+
+  "CDC":
+    base_url: "https://www.cdc.gov/"
+    profile_url: "{username}"
+    government: true
+    weight: 0.3
+
+  "NIH":
+    base_url: "https://www.nih.gov/"
+    profile_url: "{username}"
+    government: true
+    weight: 0.3
+
+  # ======================= PLATAFORMAS ESPECIALIZADAS Y DE NICHO (50+) =======================
+  "Keybase":
+    base_url: "https://keybase.io/"
+    profile_url: "{username}"
+    verification_methods: ["http", "dns", "pgp"]
+    weight: 0.9
+
+  "Keybase Proofs":
+    base_url: "https://keybase.io/"
+    profile_url: "{username}/sigs"
+    weight: 0.8
+
+  "Have I Been Pwned":
+    base_url: "https://haveibeenpwned.com/"
+    profile_url: "{username}"
+    check_breaches: true
+    weight: 0.6
+
+  "Dehashed":
+    base_url: "https://dehashed.com/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "Snusbase":
+    base_url: "https://snusbase.com/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "Leak-Lookup":
+    base_url: "https://leak-lookup.com/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "WeLeakInfo":
+    base_url: "https://weleakinfo.com/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "BreachDirectory":
+    base_url: "https://breachdirectory.org/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Intelligence X":
+    base_url: "https://intelx.io/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "Pulsedive":
+    base_url: "https://pulsedive.com/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "URLScan":
+    base_url: "https://urlscan.io/user/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "VirusTotal":
+    base_url: "https://www.virustotal.com/gui/user/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Shodan":
+    base_url: "https://www.shodan.io/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "Censys":
+    base_url: "https://censys.io/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "ZoomEye":
+    base_url: "https://www.zoomeye.org/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "BinaryEdge":
+    base_url: "https://www.binaryedge.io/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "GreyNoise":
+    base_url: "https://www.greynoise.io/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "Hunter.io":
+    base_url: "https://hunter.io/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "Clearbit":
+    base_url: "https://clearbit.com/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "FullContact":
+    base_url: "https://www.fullcontact.com/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "Pipl":
+    base_url: "https://pipl.com/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "Spokeo":
+    base_url: "https://www.spokeo.com/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "Whitepages":
+    base_url: "https://www.whitepages.com/"
+    profile_url: "{username}"
+    requires_api: true
+    weight: 0.5
+
+  "TruePeopleSearch":
+    base_url: "https://www.truepeoplesearch.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "FastPeopleSearch":
+    base_url: "https://www.fastpeoplesearch.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "ThatsThem":
+    base_url: "https://thatsthem.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "411.com":
+    base_url: "https://www.411.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "ZabaSearch":
+    base_url: "https://www.zabasearch.com/"
+    profile_url: "{username}"
+    weight: 0.5
+
+  "PeekYou":
+    base_url: "https://www.peekyou.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "WebMii":
+    base_url: "https://webmii.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Namechk":
+    base_url: "https://namechk.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "KnowEm":
+    base_url: "https://knowem.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "UserSearch":
+    base_url: "https://usersearch.org/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "WhatsMyName":
+    base_url: "https://whatsmyname.app/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Sherlock":
+    base_url: "https://github.com/sherlock-project/sherlock"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Maigret":
+    base_url: "https://github.com/soxoj/maigret"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Social-Analyzer":
+    base_url: "https://github.com/qeeqbox/social-analyzer"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "holehe":
+    base_url: "https://github.com/megadose/holehe"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "sherlock.lutzroeder.com":
+    base_url: "https://sherlock.lutzroeder.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Blackbird":
+    base_url: "https://github.com/p1ngul1n0/blackbird"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Social Mapper":
+    base_url: "https://github.com/Greenwolf/social_mapper"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Toutatis":
+    base_url: "https://github.com/megadose/toutatis"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "PhoneInfoga":
+    base_url: "https://github.com/und3sc0n0c1d0/PhoneInfoga"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "theHarvester":
+    base_url: "https://github.com/laramies/theHarvester"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "recon-ng":
+    base_url: "https://github.com/lanmaster53/recon-ng"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Maltego":
+    base_url: "https://www.maltego.com/"
+    profile_url: "{username}"
+    requires_license: true
+    weight: 0.6
+
+  "SpiderFoot":
+    base_url: "https://www.spiderfoot.net/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "OSINT Framework":
+    base_url: "https://osintframework.com/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "IntelTechniques":
+    base_url: "https://inteltechniques.com/tools/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "OSINT.link":
+    base_url: "https://osint.link/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Start.me OSINT":
+    base_url: "https://start.me/p/wMdQOM/osint"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Cipher387":
+    base_url: "https://cipher387.github.io/osintmap/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Awesome OSINT":
+    base_url: "https://github.com/jivoi/awesome-osint"
+    profile_url: "{username}"
+    weight: 0.6
+
+  # ======================= PLATAFORMAS REGIONALES Y LOCALES (30+) =======================
+  # España
+  "Tuenti":
+    base_url: "https://www.tuenti.com/"
+    profile_url: "{username}"
+    regional: "spain"
+    weight: 0.7
+
+  "Badoo España":
+    base_url: "https://badoo.com/es/profile/"
+    profile_url: "{username}"
+    regional: "spain"
+    weight: 0.7
+
+  # Francia
+  "Copains d'Avant":
+    base_url: "https://copainsdavant.linternaute.com/"
+    profile_url: "{username}"
+    regional: "france"
+    weight: 0.7
+
+  "Skyrock":
+    base_url: "https://{username}.skyrock.com"
+    profile_url: ""
+    custom_domain: true
+    regional: "france"
+    weight: 0.7
+
+  # Alemania
+  "StayFriends":
+    base_url: "https://www.stayfriends.de/"
+    profile_url: "{username}"
+    regional: "germany"
+    weight: 0.7
+
+  "Wer-kennt-wen":
+    base_url: "https://www.wer-kennt-wen.de/"
+    profile_url: "{username}"
+    regional: "germany"
+    weight: 0.7
+
+  # Rusia y países CIS
+  "VKontakte":
+    base_url: "https://vk.com/"
+    profile_url: "{username}"
+    regional: "russia"
+    weight: 0.9
+
+  "Odnoklassniki":
+    base_url: "https://ok.ru/"
+    profile_url: "{username}"
+    regional: "russia"
+    weight: 0.9
+
+  "Mail.ru":
+    base_url: "https://my.mail.ru/"
+    profile_url: "{username}"
+    regional: "russia"
+    weight: 0.8
+
+  "Yandex":
+    base_url: "https://yandex.ru/people/"
+    profile_url: "{username}"
+    regional: "russia"
+    weight: 0.8
+
+  # China
+  "Weibo":
+    base_url: "https://weibo.com/"
+    profile_url: "{username}"
+    regional: "china"
+    weight: 0.9
+
+  "QQ":
+    base_url: "https://user.qzone.qq.com/"
+    profile_url: "{username}"
+    regional: "china"
+    weight: 0.8
+
+  "WeChat":
+    base_url: "https://open.weixin.qq.com/"
+    profile_url: "{username}"
+    regional: "china"
+    weight: 0.7
+
+  "Baidu Tieba":
+    base_url: "https://tieba.baidu.com/f?kw="
+    profile_url: "{username}"
+    regional: "china"
+    weight: 0.7
+
+  "Zhihu":
+    base_url: "https://www.zhihu.com/people/"
+    profile_url: "{username}"
+    regional: "china"
+    weight: 0.8
+
+  "Douban":
+    base_url: "https://www.douban.com/people/"
+    profile_url: "{username}"
+    regional: "china"
+    weight: 0.7
+
+  # Japón
+  "Mixi":
+    base_url: "https://mixi.jp/"
+    profile_url: "{username}"
+    regional: "japan"
+    weight: 0.7
+
+  "Ameba":
+    base_url: "https://profile.ameba.jp/"
+    profile_url: "{username}"
+    regional: "japan"
+    weight: 0.7
+
+  "GREE":
+    base_url: "https://gree.jp/"
+    profile_url: "{username}"
+    regional: "japan"
+    weight: 0.6
+
+  # Corea
+  "Naver":
+    base_url: "https://blog.naver.com/"
+    profile_url: "{username}"
+    regional: "korea"
+    weight: 0.8
+
+  "Daum":
+    base_url: "https://blog.daum.net/"
+    profile_url: "{username}"
+    regional: "korea"
+    weight: 0.7
+
+  "KakaoStory":
+    base_url: "https://story.kakao.com/"
+    profile_url: "{username}"
+    regional: "korea"
+    weight: 0.7
+
+  # India
+  "ShareChat":
+    base_url: "https://sharechat.com/profile/"
+    profile_url: "{username}"
+    regional: "india"
+    weight: 0.7
+
+  "Josh":
+    base_url: "https://josh.onelink.me/"
+    profile_url: "{username}"
+    regional: "india"
+    weight: 0.6
+
+  "Moj":
+    base_url: "https://mojapp.in/@"
+    profile_url: "{username}"
+    regional: "india"
+    weight: 0.6
+
+  # Brasil
+  "Skoob":
+    base_url: "https://www.skoob.com.br/usuario/"
+    profile_url: "{username}"
+    regional: "brazil"
+    weight: 0.7
+
+  "Apontador":
+    base_url: "https://www.apontador.com.br/"
+    profile_url: "{username}"
+    regional: "brazil"
+    weight: 0.6
+
+  # México
+  "Misais":
+    base_url: "https://misais.com/"
+    profile_url: "{username}"
+    regional: "mexico"
+    weight: 0.6
+
+  # Argentina
+  "Taringa!":
+    base_url: "https://www.taringa.net/"
+    profile_url: "{username}"
+    regional: "argentina"
+    weight: 0.7
+
+  # Turquía
+  "Ekşi Sözlük":
+    base_url: "https://eksisozluk.com/biri/"
+    profile_url: "{username}"
+    regional: "turkey"
+    weight: 0.7
+
+  # Países Árabes
+  "Ahlawy":
+    base_url: "https://ahlawy.com/"
+    profile_url: "{username}"
+    regional: "arab"
+    weight: 0.6
+
+  "YallaShoot":
+    base_url: "https://yallashoot.com/"
+    profile_url: "{username}"
+    regional: "arab"
+    weight: 0.6
+
+  # ======================= PLATAFORMAS DE MENSAJERÍA INSTANTÁNEA (20+) =======================
+  "Telegram":
+    base_url: "https://t.me/"
+    profile_url: "{username}"
+    weight: 1.0
+
+  "Telegram Channel":
+    base_url: "https://t.me/s/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Telegram Group":
+    base_url: "https://t.me/joinchat/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "WhatsApp":
+    base_url: "https://wa.me/"
+    profile_url: "{username}"
+    phone_number_based: true
+    weight: 0.5
+
+  "Signal":
+    base_url: "https://signal.me/#p/"
+    profile_url: "{username}"
+    phone_number_based: true
+    weight: 0.4
+
+  "Line":
+    base_url: "https://line.me/ti/p/~"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Line Official":
+    base_url: "https://line.me/R/ti/p/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "KakaoTalk":
+    base_url: "https://open.kakao.com/o/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "WeChat":
+    base_url: "https://weixin.qq.com/"
+    profile_url: "{username}"
+    requires_qr: true
+    weight: 0.4
+
+  "Viber":
+    base_url: "https://chats.viber.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Skype":
+    base_url: "https://join.skype.com/"
+    profile_url: "{username}"
+    weight: 0.7
+
+  "Skype Live":
+    base_url: "https://web.skype.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Discord":
+    base_url: "https://discord.com/users/"
+    profile_url: "{username}"
+    weight: 0.9
+
+  "Discord Server":
+    base_url: "https://discord.gg/"
+    profile_url: "{username}"
+    weight: 0.8
+
+  "Slack":
+    base_url: "https://{username}.slack.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Microsoft Teams":
+    base_url: "https://teams.microsoft.com/l/team/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.5
+
+  "Google Chat":
+    base_url: "https://chat.google.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.5
+
+  "Zoom":
+    base_url: "https://zoom.us/j/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Google Meet":
+    base_url: "https://meet.google.com/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Cisco Webex":
+    base_url: "https://meetingsapac40.webex.com/meet/"
+    profile_url: "{username}"
+    weight: 0.5
+
+  "Jitsi":
+    base_url: "https://meet.jit.si/"
+    profile_url: "{username}"
+    weight: 0.5
+
+  "BigBlueButton":
+    base_url: "https://bigbluebutton.org/"
+    profile_url: "{username}"
+    weight: 0.4
+
+  # ======================= PLATAFORMAS DE ALMACENAMIENTO EN LA NUBE (15+) =======================
+  "Google Drive":
+    base_url: "https://drive.google.com/drive/folders/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.4
+
+  "Dropbox":
+    base_url: "https://www.dropbox.com/s/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "OneDrive":
+    base_url: "https://onedrive.live.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.4
+
+  "iCloud":
+    base_url: "https://www.icloud.com/"
+    profile_url: "{username}"
+    requires_apple_id: true
+    weight: 0.3
+
+  "Mega.nz":
+    base_url: "https://mega.nz/folder/"
+    profile_url: "{username}"
+    weight: 0.6
+
+  "Box":
+    base_url: "https://app.box.com/folder/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.4
+
+  "MediaFire":
+    base_url: "https://www.mediafire.com/folder/"
+    profile_url: "{username}"
+    weight: 0.5
+
+  "Sync.com":
+    base_url: "https://sync.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.4
+
+  "pCloud":
+    base_url: "https://my.pcloud.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.4
+
+  "Tresorit":
+    base_url: "https://tresorit.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.4
+
+  "Nextcloud":
+    base_url: "https://nextcloud.com/"
+    profile_url: "{username}"
+    custom_domain: true
+    weight: 0.5
+
+  "ownCloud":
+    base_url: "https://owncloud.org/"
+    profile_url: "{username}"
+    custom_domain: true
+    weight: 0.5
+
+  "Seafile":
+    base_url: "https://www.seafile.com/"
+    profile_url: "{username}"
+    custom_domain: true
+    weight: 0.5
+
+  "Syncplicity":
+    base_url: "https://www.syncplicity.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.4
+
+  "Egnyte":
+    base_url: "https://www.egnyte.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.4
+
+  # ======================= PLATAFORMAS DE AUTENTICACIÓN Y SSO (10+) =======================
+  "OAuth (Google)":
+    base_url: "https://accounts.google.com/o/oauth2/auth"
+    profile_url: "{username}"
+    sso_provider: true
+    weight: 0.3
+
+  "OAuth (Facebook)":
+    base_url: "https://www.facebook.com/v12.0/dialog/oauth"
+    profile_url: "{username}"
+    sso_provider: true
+    weight: 0.3
+
+  "OAuth (GitHub)":
+    base_url: "https://github.com/login/oauth/authorize"
+    profile_url: "{username}"
+    sso_provider: true
+    weight: 0.4
+
+  "OAuth (Twitter)":
+    base_url: "https://twitter.com/i/oauth2/authorize"
+    profile_url: "{username}"
+    sso_provider: true
+    weight: 0.3
+
+  "OpenID Connect":
+    base_url: "https://accounts.google.com/.well-known/openid-configuration"
+    profile_url: "{username}"
+    sso_provider: true
+    weight: 0.3
+
+  "SAML":
+    base_url: "https://saml.example.com/"
+    profile_url: "{username}"
+    sso_provider: true
+    weight: 0.2
+
+  "Auth0":
+    base_url: "https://{username}.auth0.com"
+    profile_url: ""
+    custom_domain: true
+    sso_provider: true
+    weight: 0.4
+
+  "Okta":
+    base_url: "https://{username}.okta.com"
+    profile_url: ""
+    custom_domain: true
+    sso_provider: true
+    weight: 0.4
+
+  "OneLogin":
+    base_url: "https://{username}.onelogin.com"
+    profile_url: ""
+    custom_domain: true
+    sso_provider: true
+    weight: 0.4
+
+  "Keycloak":
+    base_url: "https://{username}.keycloak.org"
+    profile_url: ""
+    custom_domain: true
+    sso_provider: true
+    weight: 0.4
+
+  # ======================= PLATAFORMAS DE DOMINIOS Y HOSTING (20+) =======================
+  "GitHub Pages":
+    base_url: "https://{username}.github.io"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.9
+
+  "GitLab Pages":
+    base_url: "https://{username}.gitlab.io"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "Netlify":
+    base_url: "https://{username}.netlify.app"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.9
+
+  "Vercel":
+    base_url: "https://{username}.vercel.app"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.9
+
+  "Firebase Hosting":
+    base_url: "https://{username}.web.app"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "Cloudflare Pages":
+    base_url: "https://{username}.pages.dev"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "Render":
+    base_url: "https://{username}.onrender.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Heroku":
+    base_url: "https://{username}.herokuapp.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "PythonAnywhere":
+    base_url: "https://{username}.pythonanywhere.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Replit":
+    base_url: "https://{username}.repl.co"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.8
+
+  "Glitch":
+    base_url: "https://{username}.glitch.me"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "CodeSandbox":
+    base_url: "https://{username}.codesandbox.io"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "StackBlitz":
+    base_url: "https://{username}.stackblitz.io"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Fleek":
+    base_url: "https://{username}.on.fleek.co"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.6
+
+  "Surge":
+    base_url: "https://{username}.surge.sh"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Zeit Now":
+    base_url: "https://{username}.now.sh"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.6
+
+  "Azure Static Web Apps":
+    base_url: "https://{username}.azurestaticapps.net"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "AWS Amplify":
+    base_url: "https://{username}.amplifyapp.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Google App Engine":
+    base_url: "https://{username}.appspot.com"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Fly.io":
+    base_url: "https://{username}.fly.dev"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  "Railway":
+    base_url: "https://{username}.up.railway.app"
+    profile_url: ""
+    custom_domain: true
+    weight: 0.7
+
+  # ======================= PLATAFORMAS DE CORREO ELECTRÓNICO (15+) =======================
+  "Gmail":
+    base_url: "https://mail.google.com/mail/u/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.2
+
+  "Outlook":
+    base_url: "https://outlook.live.com/mail/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.2
+
+  "Yahoo Mail":
+    base_url: "https://mail.yahoo.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.2
+
+  "ProtonMail":
+    base_url: "https://mail.proton.me/u/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.2
+
+  "Tutanota":
+    base_url: "https://mail.tutanota.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.2
+
+  "Zoho Mail":
+    base_url: "https://mail.zoho.com/zm/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.2
+
+  "GMX":
+    base_url: "https://www.gmx.com/mail/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.2
+
+  "Mail.com":
+    base_url: "https://www.mail.com/mail/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.2
+
+  "Yandex Mail":
+    base_url: "https://mail.yandex.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.2
+
+  "QQ Mail":
+    base_url: "https://mail.qq.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.2
+
+  "163 Mail":
+    base_url: "https://mail.163.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.2
+
+  "Sina Mail":
+    base_url: "https://mail.sina.com.cn/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.2
+
+  "Sohu Mail":
+    base_url: "https://mail.sohu.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.2
+
+  "AOL Mail":
+    base_url: "https://mail.aol.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.2
+
+  "iCloud Mail":
+    base_url: "https://www.icloud.com/mail"
+    profile_url: "{username}"
+    requires_apple_id: true
+    weight: 0.1
+
+  # ======================= PLATAFORMAS DE DNS Y CERTIFICADOS (10+) =======================
+  "Cloudflare":
+    base_url: "https://dash.cloudflare.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.3
+
+  "Google Domains":
+    base_url: "https://domains.google.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.3
+
+  "Namecheap":
+    base_url: "https://www.namecheap.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.3
+
+  "GoDaddy":
+    base_url: "https://dcc.godaddy.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.3
+
+  "Hover":
+    base_url: "https://www.hover.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.3
+
+  "DNSimple":
+    base_url: "https://dnsimple.com/"
+    profile_url: "{username}"
+    requires_login: true
+    weight: 0.3
+
+  "Let's Encrypt":
+    base_url: "https://letsencrypt.org/"
+    profile_url: "{username}"
+    ssl_certificate: true
+    weight: 0.2
+
+  "SSL For Free":
+    base_url: "https://www.sslforfree.com/"
+    profile_url: "{username}"
+    ssl_certificate: true
+    weight: 0.2
+
+  "ZeroSSL":
+    base_url: "https://zerossl.com/"
+    profile_url: "{username}"
+    ssl_certificate: true
+    weight: 0.2
+
+  "SSL.com":
+    base_url: "https://www.ssl.com/"
+    profile_url: "{username}"
+    ssl_certificate: true
+    weight: 0.2
+
+# ======================= CONFIGURACIÓN GLOBAL =======================
+config:
+  timeout: 10
+  max_retries: 3
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  verify_ssl: true
+  follow_redirects: true
+  check_rate_limit: true
+  rate_limit_delay: 1.0
+  cache_results: true
+  cache_ttl: 3600
+  output_formats: ["json", "txt", "csv", "html"]
+  default_categories: ["social", "tech", "gaming", "professional"]
+  exclude_categories: ["government", "requires_login", "requires_api"]
