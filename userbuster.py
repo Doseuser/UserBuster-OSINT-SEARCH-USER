@@ -1,14 +1,3 @@
-#!/usr/bin/env python3
-"""
-OSINT UserFinder - Herramienta avanzada de búsqueda de usuarios en plataformas
-Características:
-- Verificación robusta para evitar falsos positivos
-- Múltiples métodos de validación
-- Async/await para alta velocidad
-- Exportación en múltiples formatos
-- Configuración modular
-"""
-
 import asyncio
 import aiohttp
 import json
